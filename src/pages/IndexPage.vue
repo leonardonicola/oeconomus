@@ -13,6 +13,7 @@
 <script setup>
 import { useExpenseStore } from '../stores/expenses'
 import VueApexCharts from 'vue3-apexcharts'
+import { ref } from 'vue';
 
 const expenses = useExpenseStore()
 
@@ -78,7 +79,7 @@ const chartOptions = {
     },
   },
 }
-const series = [expenses.entertainment.value, expenses.health.value, expenses.essentials.value]
+const series = ref([expenses.total('entertainment'), expenses.total('health'), expenses.total('essentials')])
 
 function formatCurrency(val) {
   return `R$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
