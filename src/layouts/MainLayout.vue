@@ -1,6 +1,176 @@
+<script setup>
+import { onBeforeMount, ref } from 'vue'
+import { useExpenseStore } from 'src/stores/expenses'
+import { useCardStore } from 'src/stores/card'
+import { useQuasar } from 'quasar'
+import CurrencyInput from '../components/CurrencyInput.vue'
+import Header from 'src/components/Header.vue'
+
+const leftDrawerOpen = ref(true)
+const openAddExpense = ref(false)
+const openAddFunds = ref(false)
+const options = ['Entertainment', 'Health', 'Essentials']
+const originOptions = ['Credit Card', 'Wallet']
+const expenseType = ref(null)
+const expenseValue = ref(0)
+const expenseOrigin = ref(null)
+const expenseName = ref(null)
+const fundsOptions = ['Credit Card Payment', 'Wallet']
+const fundsOrigin = ref(null)
+const fundsValue = ref(0)
+const expense = useExpenseStore()
+
+function toggleDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+const $q = useQuasar()
+
+onBeforeMount(() => {
+  if ($q.screen.lt.md) {
+    leftDrawerOpen.value = false
+  }
+})
+
+function addExpenseFn() {
+  expense.addExpense({
+    name: expenseName.value,
+    value: expenseValue.value,
+    type: expenseType.value.toLowerCase(),
+    origin: expenseOrigin.value.toLowerCase(),
+  })
+  openAddExpense.value = false
+  expenseName.value = null
+  expenseType.value = null
+  expenseOrigin.value = null
+  expenseValue.value = 0
+}
+
+function addFundsFn() {
+  const card = useCardStore()
+  if (
+    fundsOrigin.value.toLowerCase() === 'credit card payment' &&
+    fundsValue.value > card.cardBalance
+  ) {
+    $q.notify({
+      type: 'warning',
+      message: "Your payment can't be higher than your credit card bill",
+    })
+  } else {
+    expense.addFunds({
+      value: fundsValue.value,
+      origin: fundsOrigin.value.toLowerCase(),
+    })
+    openAddFunds.value = false
+    fundsValue.value = 0
+    fundsOrigin.value = null
+  }
+}
+
+function openAddExpenseFn() {
+  openAddExpense.value = !openAddExpense.value
+}
+
+function openAddFundsFn() {
+  openAddFunds.value = !openAddFunds.value
+}
+</script>
+
 <template>
   <q-layout view="lHh Lpr lFf">
     <Header :toggle="leftDrawerOpen" @toggle-left-drawer="toggleDrawer" />
+
+    <q-dialog v-model="openAddExpense">
+      <q-card style="min-width: 300px">
+        <q-card-section>
+          <q-form @submit="addExpenseFn" class="q-gutter-md">
+            <div class="text-h6">Name</div>
+            <q-input
+              outlined
+              dense
+              v-model="expenseName"
+              autofocus
+              lazy-rules
+              :rules="[(val) => !!val || 'Insert at least a name']"
+            />
+
+            <div class="text-h6">Value</div>
+            <CurrencyInput
+              v-model="expenseValue"
+              :options="{
+                currency: 'BRL',
+                currencyDisplay: 'symbol',
+                hideCurrencySymbolOnFocus: true,
+                hideGroupingSeparatorOnFocus: false,
+                hideNegligibleDecimalDigitsOnFocus: false,
+                autoDecimalDigits: true,
+              }"
+            />
+
+            <div class="text-h6">Type</div>
+            <q-select
+              dense
+              outlined
+              v-model="expenseType"
+              :options="options"
+              lazy-rules
+              :rules="[(val) => !!val || 'Select a type']"
+            />
+
+            <div class="text-h6">Origin</div>
+            <q-select
+              dense
+              outlined
+              v-model="expenseOrigin"
+              :options="originOptions"
+              lazy-rules
+              :rules="[
+                (val) => !!val || 'Select from where it should discount',
+              ]"
+            />
+            <q-card-actions align="right" class="text-white">
+              <q-btn class="bg-primary" label="ADD" type="submit" />
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="openAddFunds">
+      <q-card style="min-width: 300px">
+        <q-card-section>
+          <q-form @submit="addFundsFn" class="q-gutter-md">
+            <div class="text-h6">Value</div>
+            <CurrencyInput
+              v-model="fundsValue"
+              :options="{
+                currency: 'BRL',
+                currencyDisplay: 'symbol',
+                hideCurrencySymbolOnFocus: true,
+                hideGroupingSeparatorOnFocus: false,
+                hideNegligibleDecimalDigitsOnFocus: false,
+                autoDecimalDigits: true,
+              }"
+            />
+
+            <div class="text-h6">Origin</div>
+            <q-select
+              dense
+              outlined
+              v-model="fundsOrigin"
+              :options="fundsOptions"
+              lazy-rules
+              :rules="[
+                (val) => !!val || 'Select from where it should increment',
+              ]"
+            />
+            <q-card-actions align="right" class="text-white">
+              <q-btn class="bg-primary" label="ADD" type="submit" />
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
     <q-drawer
       v-model="leftDrawerOpen"
@@ -15,6 +185,7 @@
           v-ripple
           class="bg-purple-9 q-mb-lg col-12"
           style="border-radius: 20px"
+          @click="openAddExpenseFn"
         >
           <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
             + ADD EXPENSE
@@ -26,6 +197,7 @@
           v-ripple
           class="bg-teal q-mb-lg col-12"
           style="border-radius: 20px"
+          @click="openAddFundsFn"
         >
           <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
             + ADD <br />
@@ -100,7 +272,6 @@
         </q-item>
         <q-item
           to="/"
-
           active-class="bg-red-1"
           class="col-12 justify-center q-mt-xl"
           style="border-radius: 15px"
@@ -122,23 +293,3 @@
     </q-page-container>
   </q-layout>
 </template>
-
-<script setup>
-import { onBeforeMount, ref } from 'vue'
-import { useQuasar } from 'quasar';
-import Header from 'src/components/Header.vue'
-
-const toggleDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
-const $q = useQuasar()
-
-onBeforeMount(() => {
-  if($q.screen.lt.md){
-    leftDrawerOpen.value = false
-  }
-})
-
-const leftDrawerOpen = ref(true)
-</script>
