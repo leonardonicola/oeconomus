@@ -1,10 +1,10 @@
 <template>
-  <q-header style="min-height: 200px" class="bg-white text-black q-ma-md">
+  <q-header style="min-height: 200px" class="bg-white text-black q-pa-md">
     <div
       :class="$q.screen.lt.md ? '' : 'justify-center'"
       class="row items-center"
     >
-      <div :class="$q.screen.lt.md ? 'q-my-md' : 'absolute-left'">
+      <div :class="$q.screen.lt.md ? 'q-my-md ' : 'absolute-left q-ma-md'">
         <q-btn flat round size="1.5em" @click="emit('toggleLeftDrawer')">
           <q-icon class="fas fa-bars" />
         </q-btn>
@@ -13,7 +13,7 @@
       <div class="col-12 col-md-6">
         <div class="text-h5 text-grey-9 text-weight-bold">Wallet balance</div>
         <div class="text-h4 text-primary text-weight-bolder">
-          {{ this.expenses.balanceWithFilter }}
+          {{ expenses.balanceWithFilter }}
         </div>
       </div>
 
@@ -22,7 +22,7 @@
         style="border-radius: 30px; width: 300px"
       >
         <div class="q-my-sm text-h6 text-weight-bold">
-          {{ this.card.balanceWithFilter }}
+          {{ card.balanceWithFilter }}
         </div>
         <div class="text-body1 text-grey-6 text-weight-bold">
           <q-icon
