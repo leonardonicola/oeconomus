@@ -5,14 +5,9 @@
       class="row items-center"
     >
       <div :class="$q.screen.lt.md ? 'q-my-md' : 'absolute-left'">
-        <q-btn
-          flat
-          round
-          size="1.5em"
-          icon="menu"
-          aria-label="Menu"
-          @click="emit('toggleLeftDrawer')"
-        />
+        <q-btn flat round size="1.5em" @click="emit('toggleLeftDrawer')">
+          <q-icon class="fas fa-bars" />
+        </q-btn>
       </div>
 
       <div class="col-12 col-md-6">
@@ -45,7 +40,6 @@
 <script setup>
 import { useExpenseStore } from '../stores/expenses'
 import { useCardStore } from '../stores/card'
-import { defineEmits } from 'vue'
 
 const emit = defineEmits(['toggleLeftDrawer'])
 
