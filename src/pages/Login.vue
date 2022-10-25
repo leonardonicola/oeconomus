@@ -49,7 +49,6 @@ const router = useRouter()
 const $q = useQuasar()
 const user = useUserStore()
 
-const accept = ref(false)
 const email = ref('')
 const password = ref('')
 
