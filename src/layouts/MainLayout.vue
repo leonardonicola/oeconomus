@@ -1,41 +1,119 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
+    <Header :toggle="leftDrawerOpen" @toggle-left-drawer="toggleDrawer" />
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
+      mini
+      :mini-width="180"
+      class="q-pa-lg"
     >
-      <q-list>
-        <q-item-label
-          header
+      <q-list class="row text-center">
+        <q-item
+          clickable
+          v-ripple
+          class="bg-purple-9 q-mb-lg col-12"
+          style="border-radius: 20px"
         >
-          Essential Links
-        </q-item-label>
+          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
+            + ADD EXPENSE
+          </div>
+        </q-item>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item
+          clickable
+          v-ripple
+          class="bg-teal q-mb-lg col-12"
+          style="border-radius: 20px"
+        >
+          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
+            + ADD <br />
+            FUNDS
+          </div>
+        </q-item>
+
+        <div class="text-h5 text-weight-bold q-mb-lg">
+          Expenses per category
+        </div>
+        <q-item
+          to="/app/health"
+          active-class="bg-teal-1"
+          style="border-radius: 15px"
+          class="col-6 col-md-12 justify-center"
+        >
+          <div class="bg-teal-2" style="border-radius: 7px">
+            <q-icon
+              name="fas fa-heart"
+              class="q-pa-md"
+              color="teal"
+              size="sm"
+            />
+          </div>
+        </q-item>
+
+        <q-item
+          to="/app/essentials"
+          active-class="bg-deep-purple-1"
+          style="border-radius: 15px"
+          class="col-6 col-md-12 justify-center"
+        >
+          <div class="bg-deep-purple-3" style="border-radius: 7px">
+            <q-icon
+              name="fas fa-shopping-bag"
+              class="q-pa-md"
+              color="deep-purple"
+              size="sm"
+            />
+          </div>
+        </q-item>
+        <q-item
+          to="/app/entertainment"
+          active-class="bg-red-1"
+          class="col-6 col-md-12 justify-center"
+          style="border-radius: 15px"
+        >
+          <div class="bg-red-11" style="border-radius: 7px">
+            <q-icon
+              size="sm"
+              name="fas fa-film"
+              class="q-pa-md"
+              color="red-13"
+            />
+          </div>
+        </q-item>
+        <q-item
+          to="/app"
+          exact
+          active-class="bg-orange-1"
+          class="col-6 col-md-12 justify-center"
+          style="border-radius: 15px"
+        >
+          <div class="bg-orange-2" style="border-radius: 7px">
+            <q-icon
+              name="fas fa-chart-bar"
+              size="sm"
+              class="q-pa-md"
+              color="orange"
+            />
+          </div>
+        </q-item>
+        <q-item
+          to="/"
+
+          active-class="bg-red-1"
+          class="col-12 justify-center q-mt-xl"
+          style="border-radius: 15px"
+        >
+          <div class="bg-red-2" style="border-radius: 7px">
+            <q-icon
+              name="fas fa-sign-out"
+              size="sm"
+              class="q-pa-md"
+              color="red"
+            />
+          </div>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -45,72 +123,22 @@
   </q-layout>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+<script setup>
+import { onBeforeMount, ref } from 'vue'
+import { useQuasar } from 'quasar';
+import Header from 'src/components/Header.vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+const toggleDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
 
-export default defineComponent({
-  name: 'MainLayout',
+const $q = useQuasar()
 
-  components: {
-    EssentialLink
-  },
-
-  setup () {
-    const leftDrawerOpen = ref(false)
-
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
+onBeforeMount(() => {
+  if($q.screen.lt.md){
+    leftDrawerOpen.value = false
   }
 })
+
+const leftDrawerOpen = ref(true)
 </script>
