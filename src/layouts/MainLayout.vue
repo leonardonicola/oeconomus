@@ -3,9 +3,11 @@ import { onBeforeMount, ref } from 'vue'
 import { useExpenseStore } from 'src/stores/expenses'
 import { useCardStore } from 'src/stores/card'
 import { useQuasar } from 'quasar'
-import CurrencyInput from '../components/CurrencyInput.vue'
-import Header from 'src/components/Header.vue'
-
+import { date } from 'quasar'
+import { defineAsyncComponent } from 'vue'
+const CurrencyInput = defineAsyncComponent(() =>
+  import('../components/CurrencyInput.vue')
+)
 const leftDrawerOpen = ref(true)
 const openAddExpense = ref(false)
 const openAddFunds = ref(false)
@@ -20,10 +22,6 @@ const fundsOrigin = ref(null)
 const fundsValue = ref(0)
 const expense = useExpenseStore()
 
-function toggleDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
 const $q = useQuasar()
 
 onBeforeMount(() => {
@@ -32,18 +30,31 @@ onBeforeMount(() => {
   }
 })
 
-function addExpenseFn() {
-  expense.addExpense({
-    name: expenseName.value,
-    value: expenseValue.value,
-    type: expenseType.value.toLowerCase(),
-    origin: expenseOrigin.value.toLowerCase(),
-  })
+function resetExpensesValues() {
   openAddExpense.value = false
   expenseName.value = null
   expenseType.value = null
   expenseOrigin.value = null
   expenseValue.value = 0
+}
+
+function resetFundsValues() {
+  openAddFunds.value = false
+  fundsValue.value = 0
+  fundsOrigin.value = null
+}
+
+function addExpenseFn() {
+  const timeStamp = Date.now()
+  const formattedTime = date.formatDate(timeStamp, 'DD MMMM')
+  expense.addExpense({
+    name: expenseName.value,
+    value: expenseValue.value,
+    type: expenseType.value.toLowerCase(),
+    origin: expenseOrigin.value.toLowerCase(),
+    date: formattedTime,
+  })
+  resetExpensesValues()
 }
 
 function addFundsFn() {
@@ -57,13 +68,8 @@ function addFundsFn() {
       message: "Your payment can't be higher than your credit card bill",
     })
   } else {
-    expense.addFunds({
-      value: fundsValue.value,
-      origin: fundsOrigin.value.toLowerCase(),
-    })
-    openAddFunds.value = false
-    fundsValue.value = 0
-    fundsOrigin.value = null
+    expense.addFunds(fundsOrigin.value.toLowerCase(), fundsValue.value)
+    resetFundsValues()
   }
 }
 
@@ -74,12 +80,14 @@ function openAddExpenseFn() {
 function openAddFundsFn() {
   openAddFunds.value = !openAddFunds.value
 }
+
+function openDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
 </script>
 
 <template>
   <q-layout view="lHh Lpr lFf">
-    <Header :toggle="leftDrawerOpen" @toggle-left-drawer="toggleDrawer" />
-
     <q-dialog v-model="openAddExpense">
       <q-card style="min-width: 300px">
         <q-card-section>
@@ -172,9 +180,12 @@ function openAddFundsFn() {
       </q-card>
     </q-dialog>
 
+    <q-btn flat icon="menu" size="xl" class="q-ma-md" @click="openDrawer" />
+
     <q-drawer
       v-model="leftDrawerOpen"
       bordered
+      side="right"
       mini
       :mini-width="180"
       class="q-pa-lg"
@@ -183,12 +194,14 @@ function openAddFundsFn() {
         <q-item
           clickable
           v-ripple
-          class="bg-purple-9 q-mb-lg col-12"
+          class="bg-purple-9 q-mb-md col-12"
+          :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
           @click="openAddExpenseFn"
         >
-          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
-            + ADD EXPENSE
+          <div class="q-px-sm q-py-sm text-body1 text-weight-bold text-white">
+            + ADD <br />
+            EXPENSE
           </div>
         </q-item>
 
@@ -196,10 +209,11 @@ function openAddFundsFn() {
           clickable
           v-ripple
           class="bg-teal q-mb-lg col-12"
+          :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
           @click="openAddFundsFn"
         >
-          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
+          <div class="q-px-sm q-py-sm text-body1 text-weight-bold text-white">
             + ADD <br />
             FUNDS
           </div>
@@ -215,12 +229,7 @@ function openAddFundsFn() {
           class="col-6 col-md-12 justify-center"
         >
           <div class="bg-teal-2" style="border-radius: 7px">
-            <q-icon
-              name="fas fa-heart"
-              class="q-pa-md"
-              color="teal"
-              size="sm"
-            />
+            <q-icon name="favorite" class="q-pa-md" color="teal" size="sm" />
           </div>
         </q-item>
 
@@ -232,7 +241,7 @@ function openAddFundsFn() {
         >
           <div class="bg-deep-purple-3" style="border-radius: 7px">
             <q-icon
-              name="fas fa-shopping-bag"
+              name="shopping_basket"
               class="q-pa-md"
               color="deep-purple"
               size="sm"
@@ -248,7 +257,7 @@ function openAddFundsFn() {
           <div class="bg-red-11" style="border-radius: 7px">
             <q-icon
               size="sm"
-              name="fas fa-film"
+              name="confirmation_number"
               class="q-pa-md"
               color="red-13"
             />
@@ -263,7 +272,7 @@ function openAddFundsFn() {
         >
           <div class="bg-orange-2" style="border-radius: 7px">
             <q-icon
-              name="fas fa-chart-bar"
+              name="home"
               size="sm"
               class="q-pa-md"
               color="orange"
@@ -277,12 +286,7 @@ function openAddFundsFn() {
           style="border-radius: 15px"
         >
           <div class="bg-red-2" style="border-radius: 7px">
-            <q-icon
-              name="fas fa-sign-out"
-              size="sm"
-              class="q-pa-md"
-              color="red"
-            />
+            <q-icon name="logout" size="sm" class="q-pa-md" color="red" />
           </div>
         </q-item>
       </q-list>
