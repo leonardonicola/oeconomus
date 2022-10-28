@@ -1,23 +1,28 @@
 <template>
-  <q-page class="flex flex-center">
-    <VueApexCharts
-      :width=500
-      type="donut"
-      :options="chartOptions"
-      :series="series"
-      class="q-my-xl"
-    />
-  </q-page>
+  <div class="row justify-center">
+    <Header />
+    <div class="row col-md-10 col-12 justify-center">
+      <VueApexCharts
+        height="350"
+        type="donut"
+        :options="chartOptionsDonut"
+        :series="series"
+        class="q-mt-xl col-md-6 col-10"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { useExpenseStore } from '../stores/expenses'
-import VueApexCharts from 'vue3-apexcharts'
-import { ref } from 'vue';
+import {defineAsyncComponent} from 'vue'
+import { ref } from 'vue'
+const VueApexCharts = defineAsyncComponent(() => import('vue3-apexcharts'))
+const Header = defineAsyncComponent(() => import('../components/Header.vue'))
 
 const expenses = useExpenseStore()
 
-const chartOptions = {
+const chartOptionsDonut = {
   dataLabels: {
     enabled: false,
   },
@@ -27,27 +32,20 @@ const chartOptions = {
   },
   responsive: [
     {
-      breakpoint: 480,
+      breakpoint: 600,
       options: {
         chart: {
-          width: 400,
-        },
-      },
-    },
-  ],
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 300,
+          height: 300,
         },
         legend: {
-          position: 'bottom'
+          show: false,
         },
       },
     },
   ],
+  legend: {
+    show: false,
+  },
   labels: ['Entertainment', 'Health', 'Essentials'],
   plotOptions: {
     pie: {
@@ -79,7 +77,11 @@ const chartOptions = {
     },
   },
 }
-const series = ref([expenses.total('entertainment'), expenses.total('health'), expenses.total('essentials')])
+const series = ref([
+  expenses.total('entertainment'),
+  expenses.total('health'),
+  expenses.total('essentials'),
+])
 
 function formatCurrency(val) {
   return `R$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
