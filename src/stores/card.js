@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useCardStore = defineStore('card', {
   state: () => ({
-    cardBalance: 300,
+    cardBalance: 650,
   }),
   getters: {
     balanceWithFilter: (state) => {
