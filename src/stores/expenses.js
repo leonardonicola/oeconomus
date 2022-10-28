@@ -1,22 +1,36 @@
 import { defineStore } from 'pinia'
 import { useCardStore } from './card'
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 
 export const useExpenseStore = defineStore('expenses', {
   state: () => ({
     walletBalance: 700,
     entertainment: {
       historic: [
-        { name: 'Pub with boys', value: 150 },
+        {
+          name: 'Pub with boys',
+          value: 150,
+          date: '10 June',
+          payment: 'credit',
+        },
       ],
     },
     health: {
       historic: [
-        { name: 'Laroche cream', value: 350 },
-        { name: 'Grocery', value: 200 },
+        {
+          name: 'Laroche cream',
+          value: 350,
+          date: '21 February',
+          payment: 'credit',
+        },
+        { name: 'Grocery', value: 200, date: '01 January', payment: 'wallet' },
       ],
     },
     essentials: {
-      historic: [{ name: 'PSN Plus', value: 150 }],
+      historic: [
+        { name: 'PSN Plus', value: 150, date: '05 July', payment: 'credit' },
+      ],
     },
   }),
   getters: {
@@ -33,31 +47,78 @@ export const useExpenseStore = defineStore('expenses', {
     },
   },
   actions: {
-    addExpense(expense) {
+    debitBalance(origin, value) {
       const card = useCardStore()
+      switch (origin) {
+        case 'credit card':
+          card.cardBalance += value
+          break
+        case 'wallet':
+          this.walletBalance -= value
+          break
+      }
+    },
+    addExpense(expense) {
       this[expense.type].historic.push({
         name: expense.name,
         value: expense.value,
+        date: expense.date,
       })
-      switch(expense.origin){
-        case 'credit card':
-          card.cardBalance += expense.value
-          break;
+      this.debitBalance(expense.origin, expense.value)
+    },
+    addFunds(origin, value) {
+      const card = useCardStore()
+      switch (origin) {
+        case 'credit card payment':
+          card.cardBalance -= value
+          break
         case 'wallet':
-          this.walletBalance -= expense.value
-          break;
+          this.walletBalance += value
+          break
+        case 'credit':
+          let cardCredit = card.cardBalance
+          if (cardCredit - value <= 0) {
+            card.cardBalance = 0
+          } else {
+            card.cardBalance -= value
+          }
+          break
       }
     },
-    addFunds(funds){
+    removeExpense(expenseId, category, payment, value) {
+      this.addFunds(payment, value)
+      this[category].historic.splice(expenseId, 1)
+    },
+    applyChanges(expenseId, category, newName, newValue) {
       const card = useCardStore()
-      switch(funds.origin){
-        case 'credit card payment':
-          card.cardBalance -= funds.value
-          break;
-        case 'wallet':
-          this.walletBalance += funds.value
-          break;
+      const expenseStoreValue = this[category].historic[expenseId].value
+      const paymentType = this[category].historic[expenseId].payment
+
+
+      if (newValue > expenseStoreValue) {
+        let newIsBigger =  newValue - this[category].historic[expenseId].value
+        switch (paymentType) {
+          case 'wallet':
+            this.walletBalance -= newIsBigger
+            break
+          case 'credit':
+            card.cardBalance += newIsBigger
+            break
+        }
+      } else if (newValue < expenseStoreValue) {
+        let newIsLower = this[category].historic[expenseId].value - newValue
+        switch (paymentType) {
+          case 'wallet':
+            this.walletBalance += newIsLower
+            break
+          case 'credit':
+            card.cardBalance -= newIsLower
+            break
+        }
       }
-    }
+
+      this[category].historic[expenseId].name = newName
+      this[category].historic[expenseId].value = newValue
+    },
   },
 })
