@@ -1,5 +1,12 @@
 <template>
-  <q-input ref="inputRef" dense v-model="formattedValue" outlined lazy-rules :rules="[() => props.modelValue > 0 || 'Insert a value']"/>
+  <q-input
+    ref="inputRef"
+    dense
+    v-model="formattedValue"
+    outlined
+    lazy-rules
+    :rules="[() => props.modelValue > 0 || 'Insert a value']"
+  />
 </template>
 
 <script setup>
