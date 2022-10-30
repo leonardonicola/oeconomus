@@ -1,120 +1,152 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <Header :toggle="leftDrawerOpen" @toggle-left-drawer="toggleDrawer" />
+    <q-btn
+      v-if="$q.screen.lt.md"
+      flat
+      icon="menu"
+      size="xl"
+      class="q-ma-md"
+      @click="openDrawer"
+    />
+    <q-btn
+      v-if="$q.screen.gt.sm"
+      flat
+      icon="dark_mode"
+      size="xl"
+      class="q-ma-md"
+      @click="$q.dark.toggle()"
+    />
 
     <q-drawer
       v-model="leftDrawerOpen"
       bordered
+      side="right"
       mini
       :mini-width="180"
       class="q-pa-lg"
     >
-      <q-list class="row text-center">
+      <q-list class="row text-center justify-center">
         <q-item
           clickable
           v-ripple
-          class="bg-purple-9 q-mb-lg col-12"
+          class="bg-purple-9 q-mb-md col-12"
+          :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
+          to="/app/addexpense"
         >
-          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
-            + ADD EXPENSE
+          <div class="q-px-sm text-body1 text-weight-bold text-white">
+            + ADD <br />
+            EXPENSE
           </div>
         </q-item>
 
         <q-item
           clickable
           v-ripple
-          class="bg-teal q-mb-lg col-12"
+          class="bg-teal q-mb-md col-12"
+          :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
+          to="/app/addfunds"
         >
-          <div class="q-px-sm q-py-lg text-body1 text-weight-bold text-white">
+          <div class="q-px-sm text-body1 text-weight-bold text-white">
             + ADD <br />
             FUNDS
           </div>
         </q-item>
-
-        <div class="text-h5 text-weight-bold q-mb-lg">
-          Expenses per category
-        </div>
-        <q-item
-          to="/app/health"
-          active-class="bg-teal-1"
-          style="border-radius: 15px"
-          class="col-6 col-md-12 justify-center"
-        >
-          <div class="bg-teal-2" style="border-radius: 7px">
-            <q-icon
-              name="fas fa-heart"
-              class="q-pa-md"
-              color="teal"
-              size="sm"
-            />
-          </div>
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn
+            to="/app/health"
+            flat
+            class="bg-teal-2"
+            style="border-radius: 7px"
+          >
+            <q-icon name="favorite" class="q-py-sm" color="teal" size="sm" />
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Health</div>
         </q-item>
 
-        <q-item
-          to="/app/essentials"
-          active-class="bg-deep-purple-1"
-          style="border-radius: 15px"
-          class="col-6 col-md-12 justify-center"
-        >
-          <div class="bg-deep-purple-3" style="border-radius: 7px">
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn
+            to="/app/essentials"
+            flat
+            class="bg-deep-purple-2"
+            style="border-radius: 7px"
+          >
             <q-icon
-              name="fas fa-shopping-bag"
-              class="q-pa-md"
+              name="shopping_basket"
+              class="q-py-sm"
               color="deep-purple"
               size="sm"
             />
-          </div>
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Essentials</div>
         </q-item>
-        <q-item
-          to="/app/entertainment"
-          active-class="bg-red-1"
-          class="col-6 col-md-12 justify-center"
-          style="border-radius: 15px"
-        >
-          <div class="bg-red-11" style="border-radius: 7px">
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn
+            to="/app/entertainment"
+            flat
+            class="bg-red-2"
+            style="border-radius: 7px"
+          >
             <q-icon
-              size="sm"
-              name="fas fa-film"
-              class="q-pa-md"
+              name="confirmation_number"
+              class="q-py-sm"
               color="red-13"
-            />
-          </div>
-        </q-item>
-        <q-item
-          to="/app"
-          exact
-          active-class="bg-orange-1"
-          class="col-6 col-md-12 justify-center"
-          style="border-radius: 15px"
-        >
-          <div class="bg-orange-2" style="border-radius: 7px">
-            <q-icon
-              name="fas fa-chart-bar"
               size="sm"
-              class="q-pa-md"
-              color="orange"
             />
-          </div>
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Entertainment</div>
         </q-item>
-        <q-item
-          to="/"
-
-          active-class="bg-red-1"
-          class="col-12 justify-center q-mt-xl"
-          style="border-radius: 15px"
-        >
-          <div class="bg-red-2" style="border-radius: 7px">
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn to="/app" flat class="bg-orange-2" style="border-radius: 7px">
+            <q-icon name="home" class="q-py-sm" color="orange" size="sm" />
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Home</div>
+        </q-item>
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn
+            to="/app/settings"
+            flat
+            class="bg-blue-grey-2"
+            style="border-radius: 7px"
+          >
             <q-icon
-              name="fas fa-sign-out"
+              name="settings"
+              class="q-py-sm"
+              color="blue-grey-8"
               size="sm"
-              class="q-pa-md"
-              color="red"
             />
-          </div>
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Settings</div>
+        </q-item>
+        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
+          <q-btn to="/" flat class="bg-red-1" style="border-radius: 7px">
+            <q-icon name="logout" class="q-py-sm" color="red" size="sm" />
+          </q-btn>
+          <div class="text-weight-bold q-mt-sm">Logout</div>
         </q-item>
       </q-list>
+      <div
+        v-if="$q.screen.lt.md"
+        :class="$q.dark.isActive ? 'bg-white' : 'bg-black'"
+        class="row justify-center q-mt-xl items-center q-pa-md"
+        style="border-radius: 15px"
+        @click="$q.dark.toggle()"
+      >
+        <q-icon
+          flat
+          name="dark_mode"
+          size="lg"
+          class="q-mr-md"
+          :color="$q.dark.isActive ? 'black' : 'white'"
+        />
+        <div
+          :class="$q.dark.isActive ? 'text-black' : 'text-white'"
+          class="text-body1"
+        >
+          Toggle dark mode
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -125,20 +157,19 @@
 
 <script setup>
 import { onBeforeMount, ref } from 'vue'
-import { useQuasar } from 'quasar';
-import Header from 'src/components/Header.vue'
+import { useQuasar } from 'quasar'
 
-const toggleDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+const leftDrawerOpen = ref(true)
 
 const $q = useQuasar()
 
 onBeforeMount(() => {
-  if($q.screen.lt.md){
+  if ($q.screen.lt.md) {
     leftDrawerOpen.value = false
   }
 })
 
-const leftDrawerOpen = ref(true)
+function openDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
 </script>

@@ -18,6 +18,18 @@ const routes = [
         component: () => import('components/Entertainment.vue'),
       },
       { path: 'health', component: () => import('components/Health.vue') },
+      {
+        path: 'addexpense',
+        component: () => import('components/AddExpense.vue'),
+      },
+      {
+        path: 'addfunds',
+        component: () => import('components/AddFunds.vue'),
+      },
+      {
+        path: 'settings',
+        component: () => import('components/UserSettings.vue'),
+      },
     ],
   },
 
