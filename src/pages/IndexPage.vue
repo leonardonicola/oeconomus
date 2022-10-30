@@ -8,6 +8,7 @@
         :options="chartOptionsDonut"
         :series="series"
         class="q-mt-xl col-md-6 col-10"
+        ref="donut"
       />
     </div>
   </div>
@@ -15,19 +16,31 @@
 
 <script setup>
 import { useExpenseStore } from '../stores/expenses'
-import {defineAsyncComponent} from 'vue'
+import { useQuasar } from 'quasar'
 import { ref } from 'vue'
-const VueApexCharts = defineAsyncComponent(() => import('vue3-apexcharts'))
-const Header = defineAsyncComponent(() => import('../components/Header.vue'))
-
+import VueApexCharts from 'vue3-apexcharts'
+import Header from '../components/Header.vue'
+import { watch } from 'vue'
 const expenses = useExpenseStore()
-
+const $q = useQuasar()
+watch(
+  () => $q.dark.isActive,
+  (val) => {
+    if (val) {
+      chartOptionsDonut.chart.background.value = '#121212'
+    } else {
+      chartOptionsDonut.chart.background.value = '#FFF'
+    }
+  }
+)
 const chartOptionsDonut = {
   dataLabels: {
     enabled: false,
   },
+  chart: {
+    background: ref('#121212'),
+  },
   theme: {
-    mode: 'light',
     palette: 'palette7',
   },
   responsive: [
@@ -59,12 +72,14 @@ const chartOptionsDonut = {
             show: true,
             fontWeight: 'bold',
             formatter: function (w) {
-              return `R$ ${w.globals.seriesTotals
+              let val = w.globals.seriesTotals
                 .reduce((a, b) => {
                   return a + b
                 }, 0)
                 .toLocaleString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+                .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+              return `R$ ${val}`
             },
           },
         },
@@ -77,11 +92,11 @@ const chartOptionsDonut = {
     },
   },
 }
-const series = ref([
+const series = [
   expenses.total('entertainment'),
   expenses.total('health'),
   expenses.total('essentials'),
-])
+]
 
 function formatCurrency(val) {
   return `R$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`

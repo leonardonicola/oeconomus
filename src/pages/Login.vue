@@ -1,5 +1,12 @@
 <template>
   <q-page class="column justify-center items-center q-gutter-xl">
+    <q-btn
+      flat
+      icon="dark_mode"
+      size="xl"
+      class="absolute-top-left"
+      @click="$q.dark.toggle()"
+    />
     <div class="text-h3 text-weight-bolder">Oeconomus</div>
     <div class="text-italic">your personal finance organization web app.</div>
     <q-form @submit="verifyLogin" class="q-gutter-md">
