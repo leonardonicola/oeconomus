@@ -101,7 +101,10 @@
           v-for="(expense, id) in essentials.historic"
           :key="id"
         >
-          <q-item-section class="bg-grey-3" top>
+          <q-item-section
+            :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-grey-3'"
+            top
+          >
             <q-item-label
               header
               class="text-h5 bg-deep-purple-4 q-pa-md text-white text-weight-bold"

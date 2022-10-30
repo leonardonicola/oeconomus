@@ -105,7 +105,9 @@
           v-for="(expense, id) in entertainment.historic"
           :key="id"
         >
-          <q-item-section class="bg-grey-3" top>
+          <q-item-section
+          :class="$q.dark.isActive ? 'bg-grey-10': 'bg-grey-3'"
+          top>
             <q-item-label
               header
               class="text-h5 bg-red-13 q-pa-md text-white text-weight-bold"
@@ -131,6 +133,7 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useExpenseStore } from '../stores/expenses'
 import { defineAsyncComponent } from 'vue'
+
 const CurrencyInput = defineAsyncComponent(() =>
   import('../components/CurrencyInput.vue')
 )

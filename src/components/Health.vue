@@ -89,10 +89,7 @@
 
     <div class="col-10">
       <div class="text-h3 col-12 q-mt-xl text-weight-bold">Health</div>
-      <q-list
-        class="row q-gutter-lg q-my-lg"
-        v-if="health.historic.length > 0"
-      >
+      <q-list class="row q-gutter-lg q-my-lg" v-if="health.historic.length > 0">
         <q-item
           clickable
           @click="openExpenseInfosFn(id)"
@@ -101,7 +98,10 @@
           v-for="(expense, id) in health.historic"
           :key="id"
         >
-          <q-item-section class="bg-grey-3" top>
+          <q-item-section
+            :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-grey-3'"
+            top
+          >
             <q-item-label
               header
               class="text-h5 bg-teal-4 q-pa-md text-white text-weight-bold"
@@ -149,10 +149,8 @@ function openExpenseInfosFn(id) {
 }
 
 function removeExpense() {
-  const paymentType =
-    expenseStore['health'].historic[expenseId.value].payment
-  const expenseValue =
-    expenseStore['health'].historic[expenseId.value].value
+  const paymentType = expenseStore['health'].historic[expenseId.value].payment
+  const expenseValue = expenseStore['health'].historic[expenseId.value].value
   expenseStore.removeExpense(
     expenseId.value,
     'health',
