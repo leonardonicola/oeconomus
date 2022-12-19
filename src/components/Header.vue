@@ -10,7 +10,7 @@
       <div :class="textClass" class="text-h4 text-weight-bolder">
         {{ user.budgetFiltered }}
         <q-icon v-if="textClass === 'text-red-13'" name="error_outline">
-          <q-tooltip :offset="[10, 10]">
+          <q-tooltip anchor="top middle" self="bottom middle" :offset="[10,10]">
             Your budget is lower than your actual expenses
           </q-tooltip>
         </q-icon>
