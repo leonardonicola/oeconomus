@@ -9,15 +9,11 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
+      //Novo componente dinâmico que pega as informações por rota!
       {
-        path: 'essentials',
-        component: () => import('components/Essentials.vue'),
+        path: ':expense',
+        component: () => import('components/DynamicExpense.vue'),
       },
-      {
-        path: 'entertainment',
-        component: () => import('components/Entertainment.vue'),
-      },
-      { path: 'health', component: () => import('components/Health.vue') },
       {
         path: 'addexpense',
         component: () => import('components/AddExpense.vue'),

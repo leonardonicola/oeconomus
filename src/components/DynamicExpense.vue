@@ -2,13 +2,15 @@
   <q-page class="row justify-center col-12">
     <q-dialog @hide="resetEditValues" v-model="openExpenseInfos">
       <q-card flat class="bg-grey-1" style="width: 400px; max-width: 80vw">
-        <q-card-section class="bg-teal-4 text-white">
+        <q-card-section :class="dynamicClass()" class="text-white">
           <div class="row items-center no-wrap">
             <div class="col">
               <div class="text-h4 text-weight-bolder">
-                {{ health.historic[expenseId].name }}
+                {{
+                  expenseStore[route.params.expense].historic[expenseId].name
+                }}
               </div>
-              <div class="text-subtitle2">Health</div>
+              <div class="text-subtitle2">{{ route.params.expense }}</div>
             </div>
             <q-btn flat align="right" @click="removeExpense">REMOVE</q-btn>
           </div>
@@ -27,7 +29,11 @@
                 <q-icon name="sell" /> Value:
               </div>
               <div class="text-body1">
-                {{ formatted(health.historic[expenseId].value) }}
+                {{
+                  formatted(
+                    expenseStore[route.params.expense].historic[expenseId].value
+                  )
+                }}
               </div>
             </q-card-section>
 
@@ -36,7 +42,9 @@
                 <q-icon name="calendar_month" /> Date:
               </div>
               <div class="text-body1">
-                {{ health.historic[expenseId].date }}
+                {{
+                  expenseStore[route.params.expense].historic[expenseId].date
+                }}
               </div>
             </q-card-section>
 
@@ -45,7 +53,9 @@
                 <q-icon name="payments" /> Payment:
               </div>
               <div class="text-body1 text-capitalize">
-                {{ health.historic[expenseId].payment }}
+                {{
+                  expenseStore[route.params.expense].historic[expenseId].payment
+                }}
               </div>
             </q-card-section>
           </q-tab-panel>
@@ -75,10 +85,10 @@
               <q-input v-model="expenseEditName" outlined dense type="text" />
               <q-btn
                 push
-                :disable="!expenseEditValue || !expenseEditName"
+                :disable="!expenseEditValue && !expenseEditName"
                 @click="applyEdit"
                 class="q-mt-xl"
-                color="teal-4"
+                color="blue"
                 >APPLY</q-btn
               >
             </q-card-section>
@@ -88,15 +98,20 @@
     </q-dialog>
 
     <div class="col-10">
-      <div class="text-h3 col-12 q-mt-xl text-weight-bold">Health</div>
-      <q-list class="row q-gutter-lg q-my-lg" v-if="health.historic.length > 0">
+      <div class="text-h3 col-12 q-mt-xl text-weight-bold">
+        {{ route.params.expense.toUpperCase() }}
+      </div>
+      <q-list
+        class="row q-gutter-lg q-my-lg"
+        v-if="expenseStore[route.params.expense].historic.length > 0"
+      >
         <q-item
           clickable
-          @click="openExpenseInfosFn(id)"
+          @click="openExpenseInfosFn(expense.id)"
           class="q-pa-none col-xs-10 col-sm-6 col-md-2 overflow-hidden"
           style="border-radius: 15px"
-          v-for="(expense, id) in health.historic"
-          :key="id"
+          v-for="(expense, index) in expenseStore[route.params.expense].historic"
+          :key="index"
         >
           <q-item-section
             :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-grey-3'"
@@ -104,7 +119,8 @@
           >
             <q-item-label
               header
-              class="text-h5 bg-teal-4 q-pa-md text-white text-weight-bold"
+              :class="dynamicClass()"
+              class="text-h5 q-pa-md text-white text-weight-bold"
             >
               {{ expense.name }}
             </q-item-label>
@@ -116,17 +132,18 @@
       </q-list>
 
       <div class="text-h6 q-mt-xl text-italic text-weight-light" v-else>
-        Oops, no Health expenses to list!
+        Oops, no {{ route.params.expense }} expenses to list!
       </div>
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { useExpenseStore } from '../stores/expenses'
 import { defineAsyncComponent } from 'vue'
+
 const CurrencyInput = defineAsyncComponent(() =>
   import('../components/CurrencyInput.vue')
 )
@@ -136,26 +153,43 @@ const expenseStore = useExpenseStore()
 const expenseEditValue = ref(0)
 const expenseEditName = ref(null)
 const tab = ref('infos')
+const route = useRoute()
 
-const { health } = storeToRefs(expenseStore)
-
+//Formata os valores para disponibilizar na tela
 function formatted(val) {
-  return `R$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+  return val.toLocaleString('pt-BR', {minimumFractionDigits: 0, style: 'currency', currency: 'BRL'})
+}
+
+//Função que retorna a classe dinâmica de acordo com a despesa
+function dynamicClass() {
+  switch (route.params.expense) {
+    case 'essentials':
+      return 'bg-deep-purple-4'
+    case 'entertainment':
+      return 'bg-red-13'
+    case 'health':
+      return 'bg-teal-4'
+  }
 }
 
 function openExpenseInfosFn(id) {
   openExpenseInfos.value = !openExpenseInfos.value
   expenseId.value = id
+  expenseEditValue.value = expenseStore[route.params.expense].historic[id].value
+  expenseEditName.value = expenseStore[route.params.expense].historic[id].name
 }
 
 function removeExpense() {
-  const paymentType = expenseStore['health'].historic[expenseId.value].payment
-  const expenseValue = expenseStore['health'].historic[expenseId.value].value
-  expenseStore.removeExpense(
-    expenseId.value,
-    'health',
-    paymentType,
-    expenseValue
+  const paymentType =
+    expenseStore[route.params.expense].historic[expenseId.value].payment
+  const expenseValue =
+    expenseStore[route.params.expense].historic[expenseId.value].value
+  expenseStore.removeExpense({
+    id:expenseId.value,
+    category: route.params.expense,
+    payment: paymentType,
+    value: expenseValue
+    }
   )
   openExpenseInfos.value = false
 }
@@ -166,12 +200,12 @@ function resetEditValues() {
 }
 
 function applyEdit() {
-  expenseStore.applyChanges(
-    expenseId.value,
-    'health',
-    expenseEditName.value,
-    expenseEditValue.value
-  )
+  expenseStore.applyChanges({
+    id: expenseId.value,
+    category: route.params.expense,
+    newName: expenseEditName.value,
+    newValue: expenseEditValue.value,
+  })
   openExpenseInfos.value = false
 }
 </script>
