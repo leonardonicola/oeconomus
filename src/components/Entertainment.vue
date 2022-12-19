@@ -8,9 +8,7 @@
               <div class="text-h4 text-weight-bolder">
                 {{ entertainment.historic[expenseId].name }}
               </div>
-              <div
-
-              class="text-subtitle2">Entertainment</div>
+              <div class="text-subtitle2">Entertainment</div>
             </div>
             <q-btn flat align="right" @click="removeExpense">REMOVE</q-btn>
           </div>
@@ -91,8 +89,11 @@
 
     <div class="col-10">
       <div
-      :class="$q.screen.lt.md ? 'text-h4' : ''"
-      class="text-h3 col-12 q-mt-xl text-weight-bold">Entertainment</div>
+        :class="$q.screen.lt.md ? 'text-h4' : ''"
+        class="text-h3 col-12 q-mt-xl text-weight-bold"
+      >
+        Entertainment
+      </div>
       <q-list
         class="row q-gutter-lg q-my-lg"
         v-if="entertainment.historic.length > 0"
@@ -106,8 +107,9 @@
           :key="id"
         >
           <q-item-section
-          :class="$q.dark.isActive ? 'bg-grey-10': 'bg-grey-3'"
-          top>
+            :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-grey-3'"
+            top
+          >
             <q-item-label
               header
               class="text-h5 bg-red-13 q-pa-md text-white text-weight-bold"
