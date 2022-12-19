@@ -75,9 +75,11 @@
 import { useCardStore } from '../stores/card'
 import { useUserStore } from '../stores/user'
 import { ref } from 'vue'
+import { useQuasar } from 'quasar'
 import CurrencyInput from './CurrencyInput.vue'
 const card = useCardStore()
 const user = useUserStore()
+const $q = useQuasar()
 
 const budgetPrice = ref(user.budget)
 const editCardName = ref(card.cardName)
@@ -85,9 +87,17 @@ const editCardNumber = ref(card.cardNumber)
 
 function applyChangesCard() {
   card.changeCardInfos(editCardName.value, editCardNumber.value)
+  $q.notify({
+    type: 'positive',
+    message: 'Card infos changed successfully',
+  })
 }
 
-function applyChangesBudget(){
+function applyChangesBudget() {
   user.changeBudgetPrice(budgetPrice.value)
+  $q.notify({
+    type: 'positive',
+    message: 'Budget changed successfully',
+  })
 }
 </script>
