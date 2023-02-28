@@ -8,8 +8,7 @@ export const useExpenseStore = defineStore('expenses', {
     entertainment: useStorage('entertainment', {
       historic: [
         {
-          id: 0,
-          name: 'Cinema',
+          name: 'Example',
           value: 20,
           date: '10 June',
           payment: 'wallet',
@@ -17,33 +16,10 @@ export const useExpenseStore = defineStore('expenses', {
       ],
     }),
     health: useStorage('health', {
-      historic: [
-        {
-          id: 0,
-          name: 'Laroche cream',
-          value: 350,
-          date: '21 February',
-          payment: 'credit card',
-        },
-        {
-          id: 1,
-          name: 'Grocery',
-          value: 200,
-          date: '01 January',
-          payment: 'wallet',
-        },
-      ],
+      historic: [],
     }),
     essentials: useStorage('essentials', {
-      historic: [
-        {
-          id: 0,
-          name: 'PSN Plus',
-          value: 150,
-          date: '05 July',
-          payment: 'credit card',
-        },
-      ],
+      historic: [],
     }),
   }),
   getters: {

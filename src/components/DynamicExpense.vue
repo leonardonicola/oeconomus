@@ -107,7 +107,7 @@
       >
         <q-item
           clickable
-          @click="openExpenseInfosFn(expense.id)"
+          @click="openExpenseInfosFn(index)"
           class="q-pa-none col-xs-10 col-sm-6 col-md-2 overflow-hidden"
           style="border-radius: 15px"
           v-for="(expense, index) in expenseStore[route.params.expense].historic"

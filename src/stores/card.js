@@ -4,7 +4,7 @@ import { useStorage } from '@vueuse/core'
 export const useCardStore = defineStore('card', {
   state: () => ({
     cardBalance: useStorage('cardBalance', 650),
-    cardName: useStorage('cardName', 'Tyler Okonma'),
+    cardName: useStorage('cardName', 'Your Name'),
     cardNumber: useStorage('cardNumber', '2713373612758394'),
   }),
   getters: {

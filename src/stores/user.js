@@ -3,8 +3,6 @@ import { useStorage } from '@vueuse/core'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    email: 'nicola@gmail.com',
-    password: '123',
     budget: useStorage('budget', 500),
   }),
   getters: {

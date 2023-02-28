@@ -32,7 +32,7 @@
           class="bg-purple-9 q-mb-md col-12"
           :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
-          to="/app/addexpense"
+          to="/addexpense"
         >
           <div class="q-px-sm text-body1 text-weight-bold text-white">
             + ADD <br />
@@ -46,7 +46,7 @@
           class="bg-teal q-mb-md col-12"
           :class="$q.screen.lt.md ? 'justify-center' : ''"
           style="border-radius: 20px"
-          to="/app/addfunds"
+          to="/addfunds"
         >
           <div class="q-px-sm text-body1 text-weight-bold text-white">
             + ADD <br />
@@ -55,7 +55,7 @@
         </q-item>
         <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
           <q-btn
-            to="/app/health"
+            to="/health"
             flat
             class="bg-teal-2"
             style="border-radius: 7px"
@@ -67,7 +67,7 @@
 
         <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
           <q-btn
-            to="/app/essentials"
+            to="/essentials"
             flat
             class="bg-deep-purple-2"
             style="border-radius: 7px"
@@ -83,7 +83,7 @@
         </q-item>
         <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
           <q-btn
-            to="/app/entertainment"
+            to="/entertainment"
             flat
             class="bg-red-2"
             style="border-radius: 7px"
@@ -98,14 +98,14 @@
           <div class="text-weight-bold q-mt-sm">Entertainment</div>
         </q-item>
         <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
-          <q-btn to="/app" flat class="bg-orange-2" style="border-radius: 7px">
+          <q-btn to="/" flat class="bg-orange-2" style="border-radius: 7px">
             <q-icon name="home" class="q-py-sm" color="orange" size="sm" />
           </q-btn>
           <div class="text-weight-bold q-mt-sm">Home</div>
         </q-item>
         <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
           <q-btn
-            to="/app/settings"
+            to="/settings"
             flat
             class="bg-blue-grey-2"
             style="border-radius: 7px"
@@ -118,12 +118,6 @@
             />
           </q-btn>
           <div class="text-weight-bold q-mt-sm">Settings</div>
-        </q-item>
-        <q-item style="border-radius: 15px" class="col-6 col-md-8 column">
-          <q-btn to="/" flat class="bg-red-1" style="border-radius: 7px">
-            <q-icon name="logout" class="q-py-sm" color="red" size="sm" />
-          </q-btn>
-          <div class="text-weight-bold q-mt-sm">Logout</div>
         </q-item>
       </q-list>
       <div
